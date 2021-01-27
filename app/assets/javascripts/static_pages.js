@@ -15,7 +15,21 @@ btnRemove = '<div class="float-right"><button class="btn btn-outline-danger btn-
 $(document).on("turbolinks:load", function () {
   //Index all tasks
   if ($('.static_pages.index').length > 0) {
-    indexTasks();
+    indexTasks(function (response) {
+      var active = response.tasks.map(function(task) {
+        if (!task.completed) {
+          return '<li class="list-group-item" id='+task.id+'>'+task.content+'<div class="float-right">'+btnRemove+btnDone+'</div></li>';
+        }
+      });
+      var complete = response.tasks.map(function(task) {
+        if (task.completed) {
+          return '<li class="list-group-item" id='+task.id+'>'+task.content+'<div class="float-right">'+btnRemove+btnNotDone+'</div></li>';
+        }
+      });
+      $('#active').html(active);
+      $('#complete').html(complete);
+      totalTasks();
+    });
   }
 
   //Add new task
@@ -26,7 +40,21 @@ $(document).on("turbolinks:load", function () {
         postTask(newTask, function(response){
           var htmlString = '<li class="list-group-item" id='+response.task.id+'>'+newTask+'<div class="float-right">'+btnRemove+btnDone+'</div></li>'
           $('#active').html(htmlString);
-
+          indexTasks(function (response) {
+            var active = response.tasks.map(function(task) {
+              if (!task.completed) {
+                return '<li class="list-group-item" id='+task.id+'>'+task.content+'<div class="float-right">'+btnRemove+btnDone+'</div></li>';
+              }
+            });
+            var complete = response.tasks.map(function(task) {
+              if (task.completed) {
+                return '<li class="list-group-item" id='+task.id+'>'+task.content+'<div class="float-right">'+btnRemove+btnNotDone+'</div></li>';
+              }
+            });
+            $('#active').html(active);
+            $('#complete').html(complete);
+            totalTasks();
+          });
           totalTasks();
 
           $('input').val('');
@@ -77,7 +105,20 @@ $(document).on("turbolinks:load", function () {
       $('#foot').before(input);
       input = false;
     }
-    indexTasks();
+    indexTasks(function (response) {
+      var active = response.tasks.map(function(task) {
+        if (!task.completed) {
+          return '<li class="list-group-item" id='+task.id+'>'+task.content+'<div class="float-right">'+btnRemove+btnDone+'</div></li>';
+        }
+      });
+      var complete = response.tasks.map(function(task) {
+        if (task.completed) {
+          return '<li class="list-group-item" id='+task.id+'>'+task.content+'<div class="float-right">'+btnRemove+btnNotDone+'</div></li>';
+        }
+      });
+      $('#active').html(active);
+      $('#complete').html(complete);
+    });
     totalTasks();
   })
 });
